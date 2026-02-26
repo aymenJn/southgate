@@ -2,10 +2,13 @@ import { collection, addDoc, setDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase";
 import { View , Text, TouchableOpacity ,Image ,StyleSheet } from "react-native";
 import { useEffect } from "react";
+import { useMMKV } from "react-native-mmkv";
 
 
 export default   function MenuB () {
-
+const storage = useMMKV()
+            const jsonMalfoufTable= storage.getString('malfouf_table')
+            console.log(jsonMalfoufTable)
     return(
        <View  style = {styles.Main} >
              <View style = {styles.MenuOptions} >
