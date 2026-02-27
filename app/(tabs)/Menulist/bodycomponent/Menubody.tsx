@@ -1,14 +1,37 @@
 import { collection, addDoc, setDoc, doc, getDoc } from "firebase/firestore"; 
 import { db } from "@/firebase/firebase";
 import { View , Text, TouchableOpacity ,Image ,StyleSheet } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMMKV } from "react-native-mmkv";
 
 
 export default   function MenuB () {
+  const [malfoufData , setmalfoufData] = useState()
+  const [commandeList, setCommandeList] = useState([])
+  const displayList  = commandeList.map((item)=>{
+    return(
+           <View> 
+
+                    <Text> {item.name}</Text>
+                  </View>
+    )
+  })
 const storage = useMMKV()
             const jsonMalfoufTable= storage.getString('malfouf_table')
-            console.log(jsonMalfoufTable)
+             const jsObject = JSON.parse(jsonMalfoufTable);
+
+         
+           const malfoufJsx = jsObject.map((item)=>{
+              return(
+                    <TouchableOpacity style = {styles.item} onPress={()=>{const local = commandeList 
+                      local.push(item)
+                                     console.log(commandeList)
+
+                     setCommandeList(local)}}   > 
+           <Text style={{color : "white",fontSize :20}} > {item.name}  {item.price}  </Text>
+        </TouchableOpacity>
+              )
+            })
     return(
        <View  style = {styles.Main} >
              <View style = {styles.MenuOptions} >
@@ -27,12 +50,14 @@ const storage = useMMKV()
      </View>
      <View style = {styles.center} >
      <View style =  {styles.Itemsmenu} >
-     
+      {malfoufJsx}
      </View>
      
      <View style= {styles.OrderListHandler} >
                  <Image  source={require('./letterimge.jpg')}  style={styles.imagehandler} />
-     
+            <View style  = {styles.commandeItem}>
+            {displayList}
+            </View>
      
      </View>
      
@@ -90,6 +115,27 @@ imagehandler :  {
 Itemsmenu : {
     width : "79%" , 
     height : "100%" , 
+  display : "flex" , 
+  flexDirection : "row" , 
+  gap : 30 , 
+  flexWrap : "wrap" , 
+  marginTop : 20, 
 
+},
+item : {
+  height : 50 , 
+  minWidth : 100,
+    padding : 10 ,
+            boxShadow: '5px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+            borderRadius : 20
+
+} ,
+commandeItem : {
+  height : "100%" , 
+  width : "100%" , 
+  zIndex : 100 ,
+  position : "absolute"  , 
+  top  : 0 , 
+  left : 0
 }
 })
