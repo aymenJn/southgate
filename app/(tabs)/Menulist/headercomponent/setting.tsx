@@ -50,8 +50,9 @@ console.log(selected)
             const jsonMalfoufTable= storage.getString('malfouf_table')
             if(jsonMalfoufTable == undefined){
      const jsObject = []
+    const newId = Math.random().toString();
 
-            jsObject.push({id  : 1,name : productName ,type  : "malfouf" , price : priceProduct})
+            jsObject.push({id  : newId,name : productName ,type  : "malfouf" , price : priceProduct})
             storage.set('malfouf_table', JSON.stringify(jsObject))
               ContextValue.setOpenSetting(false)
             }

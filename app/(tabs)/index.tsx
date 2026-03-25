@@ -1,31 +1,42 @@
-
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import AppProvider  from '@/context/appcontext';
+  export  const UserContext = createContext(null)
 export default function HomeScreen() {
+
+  
 const [usernameV,setusernameV] = useState("") 
 const [passwordV,setpasswordV] = useState("") 
 
 const router  = useRouter() ;
-
+const Login = () =>{
+  if(usernameV.length> 4 && passwordV.length> 4) {
+              router.push("/Menulist")
+  }
+  else{
+    alert("no vaild data")
+  }
+}
   return (
+    <UserContext value={{usernameV}}>
+
 <View style = {styles.Maincontainer}>
 <TouchableOpacity>
-  <TextInput style = {styles.input} placeholder='user name ' />
+  <TextInput style = {styles.input} placeholder='user name ' onChangeText={(e)=> setusernameV(e)}/>
 </TouchableOpacity>
   <TouchableOpacity>
-  <TextInput style = {styles.input} placeholder='password' />
+  <TextInput style = {styles.input} placeholder='password'onChangeText={(e)=> setpasswordV(e)} secureTextEntry={true}  />
 </TouchableOpacity>
 <TouchableOpacity style = {styles.button} onPress={()=>{
-              router.push("/Menulist")
-
+    Login()
 }}>
   <Text style= {styles.buttonText} >
     Log In
   </Text>
 </TouchableOpacity>
 </View>   
+    </UserContext>
+
   );
 }
 export const  styles = StyleSheet.create({

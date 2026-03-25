@@ -7,7 +7,7 @@ export  const Menucontext = createContext(null)
 export default function Menulist(){
 const [OpenHistorique,setOpenHistorique] = useState(false) 
 const [OpenSetting , setOpenSetting] = useState(false)
-
+const [datatransfert , setdatatransfert] = useState()
 const storage =  useMMKV()
 const userTable = [
   { id: 1, name: 'Alice' },
@@ -23,9 +23,8 @@ const jsonUserTable = storage.getString('users_table')
 jsObject.push({id  : 3,name : "aymen"})
 storage.set('users_table', JSON.stringify(jsObject))
 const jsonUserTable1 = storage.getString('users_table')
-console.log(jsonUserTable1)
 return(
-   <Menucontext value={{OpenHistorique,setOpenHistorique,OpenSetting,setOpenSetting} }>
+   <Menucontext value={{OpenHistorique,setOpenHistorique,OpenSetting,setOpenSetting ,datatransfert , setdatatransfert} }>
 
 
    <View style = {styles.Maincontaniner}>

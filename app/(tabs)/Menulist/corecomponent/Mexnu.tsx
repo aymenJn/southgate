@@ -4,7 +4,7 @@ import { Menucontext } from "..";
 import Historuqe from "../headercomponent/historque";
 import Setting from "../headercomponent/setting";
 import MenuB from "../bodycomponent/Menubody";
-
+import   DynamicListScreen from "../bodycomponent/test"
 export default function Menu  (){
   const data = useContext(Menucontext)
 
@@ -16,7 +16,7 @@ export default function Menu  (){
             : data.OpenSetting && 
             <Setting />
         }
-  <MenuB />
+    <MenuB />
         </View>
     )
 }
