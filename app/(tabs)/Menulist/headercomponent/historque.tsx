@@ -1,57 +1,63 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Menucontext } from "..";
 import { useMMKV } from "react-native-mmkv";
+import Day from "./historique/financial";
+import Week from "./historique/Stock";
+import Month from "./historique/Operation";
 
 
 export default function Historuqe (){
-const data = useContext(Menucontext)
-const storage = useMMKV()
- const Operationlist= storage.getString('Historque_Operation') 
-  const jsObject = JSON.parse(Operationlist);
- console.log(data)
-       const renderItem = ({ item }) =>(
-     <TouchableOpacity style={styles.ItemStyle} onPress={()=>{
-      data.setOpenHistorique(false) 
-      data.setdatatransfert(item)
-     }} >
-       <Text style  = {{fontSize  : 20}} >  NO {item.ticket} </Text>
-     </TouchableOpacity>
-   );
+ const  [MenuSelected , setMenuSelected] = useState("financial")
     return(
         <View style = {styles.Maincontainer}>
-                <FlatList data={jsObject}   renderItem={renderItem}
-                      keyExtractor={item => item.id}   
-                      contentContainerStyle = {styles.ListHandler} />
-                  <TouchableOpacity style={styles.ItemStyle} onPress={()=> {
-                       const jsObject = []
-            storage.set('Historque_Operation', JSON.stringify(jsObject))
-                  }  } >
-       <Text style  = {{fontSize  : 20}} >  delete </Text>
-     </TouchableOpacity>
+                 <View style  = {styles.SettingMenu} >
+                   <TouchableOpacity style = {styles.ButtonOption} onPress={()=> setMenuSelected("financial")}   > 
+                             <Text style={{color : "white",fontSize :20}} > financial</Text>
+                          </TouchableOpacity>
+                           <TouchableOpacity style = {styles.ButtonOption}  onPress={()=> setMenuSelected("operation")}    > 
+                                     <Text style={{color : "white",fontSize :20}} > operation</Text>
+                                  </TouchableOpacity>
+                                   <TouchableOpacity style = {styles.ButtonOption}  onPress={()=> setMenuSelected("stock")}    > 
+                                             <Text style={{color : "white",fontSize :20}} > stock </Text>
+                                          </TouchableOpacity>
+                 </View>
+                 {
+                 MenuSelected == "financial" ? <Day /> : MenuSelected =="operation" ? <Week /> : <Month />
+                 }
+          
                  </View> 
     )
 }
-const styles  = StyleSheet.create({
-  Maincontainer  : {
+const styles = StyleSheet.create({
+  Maincontainer : {
+    width  :"100%" ,
+     paddingBottom : 100 , 
+     display : 'flex',
+ 
+  } ,
+  SettingMenu : {
     width : "100%" , 
-    height  : "100%" , 
-    display  : "flex" ,
+    minHeight  : "10%" , 
+    marginTop : 20 , 
+    display : "flex" , 
+    justifyContent : "space-around" , 
+     alignItems : "center",
+     flexDirection : "row"
+  },
+    MenuOptions : {
+    width : "100%" ,
+    height : "12%" ,
+      display : "flex" ,
     justifyContent : "space-around" , 
     flexDirection : "row" ,
-    gap : 3, 
-  
-  } ,
-  ListHandler  :  {
-        display  : "flex" ,
-    flexDirection : "row" ,
-    gap : 30, 
-    margin : 30
-  } ,
-  ItemStyle:  {
-    color : "white" , 
-    backgroundColor  : "white" ,
-    boxShadow: '5px 5px 5px 0px rgba(0, 0, 0, 0.5)',
-    maxWidth : 200
-  }
+  },
+   ButtonOption :  {
+
+    padding :"2%", 
+    borderRadius : 20 ,
+        boxShadow: '5px 5px 5px 0px rgba(0, 0, 0, 0.5)',
+
+  },
+ 
 })

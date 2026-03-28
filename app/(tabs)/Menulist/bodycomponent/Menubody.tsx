@@ -1,37 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { FlatList, Image, SectionListComponent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, ScrollView, SectionListComponent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useMMKV } from "react-native-mmkv";
 import { Menucontext } from "..";
-    export interface SelectedProduct{
-      id:string,
-      name : string , 
-      price : string , 
-      quantity :number ,
-      type : string
-     }
-
-    export interface operation {
-      selected : SelectedProduct[] ,
-      somme : number ,
-      date : string, 
-      owner  : string ,
-     }
-interface produit  {
-  id : string
-  name : string , 
-  type : string , 
-  price : string , 
-  quantity : number
-}
-interface date  {
-  year : number , 
-  month : number , 
-  day : number , 
-  hour  : number , 
-  minute : number , 
-  second  : number
-}
-const GetTime = ()=>{
+import {produit,operation,date,SelectedProduct} from "../../../../interface/interface"
+export  const GetTime = ()=>{
     const currentDate = new Date();
  const month = Number(currentDate.getMonth()) + Number(1) 
  const currentDay = new Date().getDate()
@@ -41,7 +13,19 @@ const GetTime = ()=>{
  const currentTime  : date = {year   : datej.year , month : datej.month , day : datej.day, hour : dateh.hour,minute : dateh.minute, second : dateh.seconds}
  return currentTime
 }
+const GetData = (table_Name) =>{
+  const storage = useMMKV()
+            const jsonMalfoufTable : string | undefined= storage.getString(table_Name)
+             if(jsonMalfoufTable == undefined){
+              return []
+             }
+             else {
+               const jsObject = JSON.parse(jsonMalfoufTable)
+               console.log(jsObject)
 
+                return jsObject
+             }
+}
 export default   function MenuB () {
   const data = useContext(Menucontext)
   const gettiem = GetTime()
@@ -49,20 +33,20 @@ export default   function MenuB () {
   const [ticket,setticket]  = useState(0);
    const [Operation , setoperation] = useState<operation>({owner:"aymen",date :"" ,selected:[],somme:0});
     const [Loclalsomme, setLocalsomme] = useState<number>(0); // operation somme 
+    const [Malfoufdata,setMalfoufdata] = useState(GetData("malfouf"))
+    const [chapatidata,setchapatidata] = useState(GetData("chapati"))
+    const [sandwichdata,setsandwichdata] = useState(GetData("sandwich"))
 useEffect(()=>{
-console.log(data.datatransfert)
 },[setoperation])
 const storage = useMMKV()
-            const jsonMalfoufTable : string | undefined= storage.getString('malfouf_table')
-             const jsObject = JSON.parse(jsonMalfoufTable);
       /************************** choisir produit function ***************************************************** */
 const ClickedItem  = (product : produit) =>{
   const localoperation =Operation.selected ; 
-const Index = localoperation.findIndex(user => user.name === product.name);
+const Index = localoperation.findIndex(user => user.id === product.id);
 const x = Number( product.price )+ Number(Loclalsomme)
 setLocalsomme(x)
 if(Index == -1){
-  localoperation.push({name : product.name,type : product.type,price :product.price,quantity : 1})
+  localoperation.push({ id : product.id , name : product.name,type : product.type,price :product.price,quantity : 1})
 setoperation(olddata=>({
   ...olddata ,
   selected : localoperation
@@ -114,7 +98,7 @@ if(Operationlist == undefined){
 } 
 const removeItem = (product ) => {
    const localoperation =Operation.selected ; 
-  const Index = localoperation.findIndex(user => user.name === product.name);
+  const Index = localoperation.findIndex(user => user.id === product.id);
 
   if(product.quantity<=0){
 localoperation[Index].quantity = 0
@@ -134,23 +118,38 @@ setoperation(olddata=>({
 
               const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => removeItem(item)} style={styles.ItemStyle}>
-      <Text style  = {{fontSize  : 20}} > {item.quantity} {item.name}  {item.quantity * item.price}   </Text>
+      <Text style  = {{fontSize  : 20}} > {item.quantity} {item.type[0]}{item.type[1]} {item.name}   {item.quantity * item.price}   </Text>
     </TouchableOpacity>
   );
 
       const renderMalfouf = ({ item }) => (
     <TouchableOpacity onPress={() => ClickedItem(item)} style={styles.ItemStyle}>
-      <Text style  = {{fontSize  : 20}} >{item.name}   {item.quantity} </Text>
+      <Text style  = {{fontSize  : 20, color :"white" , textAlign : "center"}} >{item.name}    </Text>
+            <Text style  = {{fontSize  : 20, color :"white",textAlign : "center"}} >{item.price}    </Text>
+
     </TouchableOpacity>
   );
     return(
        <View  style = {styles.Main} >
      <View style = {styles.center} >
      <View style =  {styles.Itemsmenu} >
-      <FlatList data={jsObject}   renderItem={renderMalfouf}
+      <ScrollView style =  {{width :"100%" , height : "100%"}}>
+      <Text  style ={{width :"100%" , textAlign : "center" , color  : "white",fontSize :30}} > Malfouf </Text>
+      <FlatList data={Malfoufdata}   renderItem={renderMalfouf}
         keyExtractor={item => item.name}  
         contentContainerStyle =  {styles.body}
         />
+         <Text  style ={{width :"100%" , textAlign : "center" , color  : "white",fontSize :30}} > Chapati </Text>
+      <FlatList data={chapatidata}   renderItem={renderMalfouf}
+        keyExtractor={item => item.name}  
+        contentContainerStyle =  {styles.body}
+        />
+         <Text  style ={{width :"100%" , textAlign : "center" , color  : "white",fontSize :30}} > Sandiwch </Text>
+      <FlatList data={sandwichdata}   renderItem={renderMalfouf}
+        keyExtractor={item => item.name}  
+        contentContainerStyle =  {styles.body}
+        />
+        </ScrollView>
      </View>
      
      <View style= {styles.OrderListHandler} >
@@ -193,7 +192,6 @@ width  : "100%" ,
 height : "100%" ,
 display : "flex" , 
 flexDirection :"row" , 
-marginTop:20
   } ,
   OrderListHandler : {
 width : "20%" ,  
@@ -211,11 +209,8 @@ Itemsmenu : {
     width : "79%" , 
     height : "100%" , 
   display : "flex" , 
-  flexDirection : "row" , 
-  gap : 30 , 
+  flexDirection : "column" , 
   flexWrap : "wrap" , 
-  marginTop : 20, 
-
 },
 item : {
   height : 50 , 
@@ -235,9 +230,13 @@ left : "5%"
 ItemStyle : {
 fontSize : 20 , 
 marginTop : 15 ,
-marginLeft : 10 , 
+marginLeft : 10 ,
+marginRight : 20, 
+marginBottom : 20,
 display : "flex" ,
-gap : 10
+gap : 10,
+boxShadow: '5px 5px 5px 5px rgba(28, 26, 26, 0.5)',
+padding: 10,
 },
 confirmebutton : {
   padding : 10,
