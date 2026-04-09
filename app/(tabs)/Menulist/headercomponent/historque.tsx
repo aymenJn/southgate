@@ -23,7 +23,7 @@ export default function Historuqe (){
                                           </TouchableOpacity>
                  </View>
                  {
-                 MenuSelected == "financial" ? <Day /> : MenuSelected =="operation" ? <Week /> : <Month />
+                 MenuSelected == "financial" ? <Day /> : MenuSelected =="operation" ? <Month /> : <Week />
                  }
           
                  </View> 

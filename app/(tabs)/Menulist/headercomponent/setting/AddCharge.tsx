@@ -3,30 +3,32 @@ import { styles } from "./AddItem";
 import { useContext, useState } from "react";
 import { useMMKV } from "react-native-mmkv";
 import { Menucontext } from "../..";
+import { GetTime } from "../../bodycomponent/Menubody";
 export default function AddCharge() {
     const [ChargeCause,setChargeCause] = useState('')
     const [ChargeMount,setChargeMount] = useState('')
       const ContextValue = useContext(Menucontext)
-    
+    const time = GetTime()
     const storage = useMMKV()
     const ChargeConfirme = () =>{
-        if(ChargeCause.length > 5 && ChargeMount.length > 2) {
+        if(ChargeCause.length > 3 && ChargeMount.length > 2) {
 
      const jsonCharge= storage.getString("Charge")
      const newId = Math.random().toString();
      if(jsonCharge == undefined){
          const jsObject = []
-        jsObject.push({id  : newId,cause : ChargeCause , price : ChargeMount})
+        jsObject.push({id  : newId,cause : ChargeCause , price : ChargeMount,time : time})
         storage.set("Charge", JSON.stringify(jsObject))
         ContextValue.setOpenSetting(false)
         }
         else {
             const jsObject = JSON.parse(jsonCharge);
-        jsObject.push({id  : newId,cause : ChargeCause , price : ChargeMount})
-            storage.set("charge", JSON.stringify(jsObject))
+        jsObject.push({id  : newId,cause : ChargeCause , price : ChargeMount,time : time})
+            storage.set("Charge", JSON.stringify(jsObject))
              ContextValue.setOpenSetting(false)
                     }
         }
+        else alert("no data ")
     }
     return(
      <View style = {styles.card}>

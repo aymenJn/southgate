@@ -3,8 +3,7 @@ import { StyleSheet, View } from "react-native";
 export default function Week (){
 
     return(
-        <View>
-        month 
+        <View style = {styles.card} >
         </View>
     )
 }

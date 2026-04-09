@@ -21,16 +21,28 @@ const GetData = (table_Name) =>{
              }
              else {
                const jsObject = JSON.parse(jsonMalfoufTable)
-               console.log(jsObject)
-
                 return jsObject
              }
+}
+const GetTicket = (table_Name ) => {
+  const storage = useMMKV()
+            const jsonTicket : string | undefined= storage.getString(table_Name)
+if(jsonTicket == undefined){
+            storage.set(table_Name, JSON.stringify("0"))
+
+  return 0
+}
+else{
+const jsObject = JSON.parse(jsonTicket)
+console.log(jsObject)
+                return jsObject
+}
 }
 export default   function MenuB () {
   const data = useContext(Menucontext)
   const gettiem = GetTime()
  const [time, settime]  = useState(gettiem)
-  const [ticket,setticket]  = useState(0);
+  const [ticket,setticket]  = useState(GetTicket("Ticket"));
    const [Operation , setoperation] = useState<operation>({owner:"aymen",date :"" ,selected:[],somme:0});
     const [Loclalsomme, setLocalsomme] = useState<number>(0); // operation somme 
     const [Malfoufdata,setMalfoufdata] = useState(GetData("malfouf"))
@@ -75,6 +87,8 @@ const SaveData  = () =>{
  if(Operation.selected.length> 0) {
    const ticke = Number(ticket) +1
         setticket(ticke)
+          storage.set('Ticket', JSON.stringify(ticke))
+
     const instantdate = GetTime()
  const datasaved = {id  : newId,owner : Operation.owner,date  : instantdate  , somme : Loclalsomme , selected : Operation.selected,ticket : ticke}
 
