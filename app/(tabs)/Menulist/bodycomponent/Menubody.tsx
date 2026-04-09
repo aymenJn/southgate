@@ -3,6 +3,9 @@ import { FlatList, Image, ScrollView, SectionListComponent, StyleSheet, Text, To
 import { useMMKV } from "react-native-mmkv";
 import { Menucontext } from "..";
 import {produit,operation,date,SelectedProduct} from "../../../../interface/interface"
+import { printSampleReceipt } from "@/firebase/Print";
+import { USBPrinter } from 'react-native-thermal-receipt-printer';
+
 export  const GetTime = ()=>{
     const currentDate = new Date();
  const month = Number(currentDate.getMonth()) + Number(1) 
@@ -79,7 +82,7 @@ setoperation(olddata=>({
   }))
   setLocalsomme (0)
   }
-const SaveData  = () =>{
+const SaveData  = async () =>{
  
   const newId = Math.random().toString();
  const Operationlist= storage.getString('Historque_Operation') 
@@ -91,7 +94,13 @@ const SaveData  = () =>{
 
     const instantdate = GetTime()
  const datasaved = {id  : newId,owner : Operation.owner,date  : instantdate  , somme : Loclalsomme , selected : Operation.selected,ticket : ticke}
+const devices = await USBPrinter.getDeviceList();
 
+// 2. Connect to a specific printer
+await USBPrinter.connectPrinter(devices[0].vendorId, devices[0].productId);
+
+// 3. Print ESC/POS formatted text
+USBPrinter.printText("<C>MY RECEIPT</C>\n<L>Item 1</L><R>$10.00</R>\n");
 if(Operationlist == undefined){
    const jsObject = []
             jsObject.push(datasaved)
